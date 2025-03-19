@@ -16,7 +16,7 @@ public class SteamLobby : MonoBehaviour
     
     // change for commit TODO: delete this
 
-    public GameObject hostButton;
+    public Button hostButton;
     public Text lobbyNameText;
 
     private void Start()
@@ -34,7 +34,8 @@ public class SteamLobby : MonoBehaviour
         GameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnJoinRequested);
         LobbyEnter = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
         
-        hostButton.SetActive(true);
+        // hostButton.SetActive(true);
+        hostButton.interactable = true;
         lobbyNameText.gameObject.SetActive(false);
     }
 
@@ -81,7 +82,8 @@ public class SteamLobby : MonoBehaviour
     {
         // Everyone (clients + hosts)
         Debug.Log("OnLobbyEntered callback");
-        hostButton.SetActive(false);
+        // hostButton.SetActive(false);
+        hostButton.interactable = false;
         currentLobbyId = callback.m_ulSteamIDLobby;
         lobbyNameText.gameObject.SetActive(true);
         lobbyNameText.text = SteamMatchmaking.GetLobbyData(new CSteamID(currentLobbyId), "name");

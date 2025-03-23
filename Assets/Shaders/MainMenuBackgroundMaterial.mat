@@ -45,6 +45,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _DisplacementStrength: 0.1
     - _EnableExternalAlpha: 0
     - _Param1: 1.07
     - _Param2: 0.93

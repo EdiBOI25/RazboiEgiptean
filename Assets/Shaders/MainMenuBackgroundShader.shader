@@ -6,6 +6,7 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        
         _Color1 ("Color 1", Color) = (1,0,0,1)
         _Color2 ("Color 2", Color) = (0,0,1,1)
         _Color3 ("Color 3", Color) = (0,1,0,1)
@@ -28,6 +29,7 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
+                float3 normal : NORMAL;
             };
 
             struct v2f
@@ -44,13 +46,6 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
             float4 _Color4;
             float4 _Color5;
 
-            v2f vert (appdata v)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                return o;
-            }
 
             static const float2x2 m = float2x2(0.80, -0.60, 0.60, 0.80);
             
@@ -100,8 +95,18 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
                 return lerp(f, f * f * f * 3.5, f * abs(n.x));
             }
             
+            v2f vert (appdata v)
+            {
+                v2f o;
+                
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                return o;
+            }
+            
             fixed4 frag(v2f i) : SV_Target
             {
+                i.uv *= 2.0;
                 float2 p = (2.0 * i.uv - 1.0) * float2(_ScreenParams.x / _ScreenParams.y, 1.0);                
                 float e = 2.0 / _ScreenParams.y;
                 float4 on = float4(0.0, 0.0, 0.0, 0.0);

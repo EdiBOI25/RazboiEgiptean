@@ -7,6 +7,9 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
     {
         _MainTex ("Texture", 2D) = "white" {}
         
+        _Opacity ("Opacity", Range(0, 1)) = 1
+        _Speed ("Speed", Range(0, 10)) = 1
+        
         _Color1 ("Color 1", Color) = (1,0,0,1)
         _Color2 ("Color 2", Color) = (0,0,1,1)
         _Color3 ("Color 3", Color) = (0,1,0,1)
@@ -39,6 +42,8 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
             };
 
             sampler2D _MainTex;
+            float _Opacity;
+            float _Speed;
             float4 _MainTex_ST;
             float4 _Color1;
             float4 _Color2;
@@ -86,9 +91,9 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
             
             float func(float2 q, out float4 ron)
             {
-                q += 0.03 * sin(float2(0.27, 0.23) * _Time.y + length(q) * float2(4.1, 4.3));
+                q += 0.03 * sin(float2(0.27, 0.23) * _Time.y * _Speed + length(q) * float2(4.1, 4.3));
                 float2 o = fbm4_2(0.9 * q);
-                o += 0.04 * sin(float2(0.12, 0.14) * _Time.y + length(o));
+                o += 0.04 * sin(float2(0.12, 0.14) * _Time.y * _Speed + length(o));
                 float2 n = fbm6_2(3.0 * o);
                 ron = float4(o, n);
                 float f = 0.5 + 0.5 * fbm4(1.8 * q + 6.0 * n);
@@ -120,7 +125,7 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
                 col = clamp( col*f*2.0, 0.0, 1.0 );
                 
                 // float4 col = float4(f, f, f, (1.0 / f) * 0.125);
-                return float4(col, 1);
+                return float4(col * _Opacity, 1);
             }
             ENDCG
         }

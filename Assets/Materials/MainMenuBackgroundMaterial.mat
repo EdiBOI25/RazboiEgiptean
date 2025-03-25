@@ -54,8 +54,12 @@ Material:
     - _Param3: 0.07
     - _Param4: 0.5
     - _Param5: 1
-    - _Speed: 2
+    - _Speed: 4
     - _SpiralStrength: 1.64
+    - _SwirlAngle: 5
+    - _SwirlRadius: 0.19
+    - _SwirlRotation: 5
+    - _SwirlStrength: 0.201
     - _WarpIntensity: 0.43
     - _ZWrite: 0
     m_Colors:

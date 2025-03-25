@@ -10,6 +10,9 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
         _Opacity ("Opacity", Range(0, 1)) = 1
         _Speed ("Speed", Range(0, 10)) = 1
         
+        _SwirlStrength ("Swirl Strength", Range(0, 1)) = 0.5
+        _SwirlRotation ("Swirl Rotation", Range(0, 5)) = 2
+        
         _Color1 ("Color 1", Color) = (1,0,0,1)
         _Color2 ("Color 2", Color) = (0,0,1,1)
         _Color3 ("Color 3", Color) = (0,1,0,1)
@@ -44,6 +47,8 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
             sampler2D _MainTex;
             float _Opacity;
             float _Speed;
+            float _SwirlStrength;
+            float _SwirlRotation;
             float4 _MainTex_ST;
             float4 _Color1;
             float4 _Color2;
@@ -89,7 +94,7 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
                 return float2(fbm6(p + float2(16.8, 16.8)), fbm6(p + float2(11.5, 11.5)));
             }
             
-            float func(float2 q, out float4 ron)
+            float big_noise(float2 q, out float4 ron)
             {
                 q += 0.03 * sin(float2(0.27, 0.23) * _Time.y * _Speed + length(q) * float2(4.1, 4.3));
                 float2 o = fbm4_2(0.9 * q);
@@ -98,6 +103,22 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
                 ron = float4(o, n);
                 float f = 0.5 + 0.5 * fbm4(1.8 * q + 6.0 * n);
                 return lerp(f, f * f * f * 3.5, f * abs(n.x));
+            }
+
+            float2 SwirlUV(float2 uv, float2 center, float strength, float rotation) {
+                float2 centeredUV = uv - center;
+                float dist = length(centeredUV);
+                float angle = atan2(centeredUV.y, centeredUV.x);
+                
+                angle += strength * (1.0 - dist) * rotation;
+                
+                // convert back to uv coordinates
+                float2 swirledUV = float2(
+                    cos(angle) * dist + center.x,
+                    sin(angle) * dist + center.y
+                );
+                
+                return swirledUV;
             }
             
             v2f vert (appdata v)
@@ -112,10 +133,11 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
             fixed4 frag(v2f i) : SV_Target
             {
                 i.uv *= 2.0;
+                i.uv = SwirlUV(i.uv, float2(1, 1), _SwirlStrength, _SwirlRotation);
                 float2 p = (2.0 * i.uv - 1.0) * float2(_ScreenParams.x / _ScreenParams.y, 1.0);                
                 float e = 2.0 / _ScreenParams.y;
                 float4 on = float4(0.0, 0.0, 0.0, 0.0);
-                float f = func(p, on);
+                float f = big_noise(p, on);
                 
                 float3 col = _Color1;
                 col = lerp(col, _Color2, f);
@@ -125,6 +147,7 @@ Shader "EdiCustom/Unlit/MainMenuBackgroundShader"
                 col = clamp( col*f*2.0, 0.0, 1.0 );
                 
                 // float4 col = float4(f, f, f, (1.0 / f) * 0.125);
+                // return float4(SwirlUV(i.uv, float2(1, 1), _SwirlRadius, _SwirlAngle), 0, 1);
                 return float4(col * _Opacity, 1);
             }
             ENDCG

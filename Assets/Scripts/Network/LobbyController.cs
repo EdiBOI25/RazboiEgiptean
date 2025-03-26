@@ -89,6 +89,7 @@ public class LobbyController : MonoBehaviour
             newPlayerItemScript.SetPlayerValues();
 
             newPlayerItem.transform.localScale = Vector3.one;
+            // newPlayerItem.transform.localPosition = new Vector3(transform.position.x, transform.position.y, -10);
             
             _playerListItems.Add(newPlayerItemScript);
         }
@@ -112,7 +113,8 @@ public class LobbyController : MonoBehaviour
                 newPlayerItemScript.SetPlayerValues();
 
                 newPlayerItem.transform.localScale = Vector3.one;
-            
+                // newPlayerItem.transform.localPosition = new Vector3(transform.position.x, transform.position.y, -10);
+
                 _playerListItems.Add(newPlayerItemScript);
             }
         }

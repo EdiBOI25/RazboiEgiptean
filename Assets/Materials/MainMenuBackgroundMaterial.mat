@@ -47,14 +47,14 @@ Material:
     m_Floats:
     - _DisplacementStrength: 0.1
     - _EnableExternalAlpha: 0
-    - _Opacity: 0.5
+    - _Opacity: 0.2
     - _Opcaity: 1
     - _Param1: 1.07
     - _Param2: 0.93
     - _Param3: 0.07
     - _Param4: 0.5
     - _Param5: 1
-    - _Speed: 4
+    - _Speed: 0.2
     - _SpiralStrength: 1.64
     - _SwirlAngle: 5
     - _SwirlRadius: 0.19

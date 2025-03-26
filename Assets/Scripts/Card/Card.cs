@@ -27,6 +27,12 @@ namespace Card
             float targetRotation = isFaceUp ? 0f : 180f;
             StartCoroutine(FlipAnimation(targetRotation));
         }
+        
+        public void SetVisibility(bool isVisible)
+        {
+            frontQuad.GetComponent<MeshRenderer>().enabled = isVisible;
+            backQuad.GetComponent<MeshRenderer>().enabled = isVisible;
+        }
 
         private System.Collections.IEnumerator FlipAnimation(float targetRotation)
         {

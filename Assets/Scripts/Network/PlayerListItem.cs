@@ -19,6 +19,7 @@ public class PlayerListItem : MonoBehaviour
     private void Start()
     {
         AvatarImageLoaded = Callback<AvatarImageLoaded_t>.Create(OnImageLoaded);
+        
     }
 
     void GetPlayerIcon()

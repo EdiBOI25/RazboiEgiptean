@@ -12,13 +12,34 @@ namespace Card
         private GameObject frontQuad;
         private GameObject backQuad;
 
-        public void Start()
+        public void Awake()
         {
             frontQuad = transform.GetChild(0).GameObject();
             backQuad = transform.GetChild(1).GameObject();
             
+            UpdateTextures();
+        }
+
+        private void UpdateTextures()
+        {
             frontQuad.GetComponent<MeshRenderer>().material.mainTexture = cardData.GetFrontTexture();
             backQuad.GetComponent<MeshRenderer>().material.mainTexture = cardData.GetBackTexture();
+        }
+
+        private void RefreshCard()
+        {
+            UpdateTextures();;
+        }
+
+        public void SetCardData(CardData newCardData)
+        {
+            this.cardData = newCardData;
+            RefreshCard();
+        }
+
+        public CardData GetCardData()
+        {
+            return this.cardData;
         }
 
         public void Flip()
@@ -36,10 +57,10 @@ namespace Card
 
         private System.Collections.IEnumerator FlipAnimation(float targetRotation)
         {
-            float duration = 1f; // Flip speed
+            float duration = 0.2f; // Flip speed
             float elapsed = 0f;
             Quaternion startRotation = transform.rotation;
-            Quaternion endRotation = Quaternion.Euler(targetRotation, 0, 0);
+            Quaternion endRotation = Quaternion.Euler(targetRotation, startRotation.y, startRotation.z);
 
             while (elapsed < duration)
             {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -20,41 +21,57 @@ namespace Card
         [SerializeField] private float pileCardSpacing = 0.5f;
         [SerializeField] private float verticalSpacing = 1.5f;
         
-        [SerializeField] private int maxHandSize = 5;
+        [SerializeField] private int maxHandSize = 26;
+        [SerializeField] private bool isCenterPile = false;
+        private float _flipRotation = 180f; // rotation to flip card
         
         private HandForm handForm = HandForm.Fan; // change form from fan to pile
         [SerializeField] private List<GameObject> cardsInHand = new List<GameObject>();
     
         void Start()
         {
-            AddCardToHand();
-            AddCardToHand();
-            AddCardToHand();
+            
         }
         
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                RemoveCardFromHand();
-            }
-
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                AddCardToHand();
-            }
-            UpdateHandVisuals();
+            
+            
+            // UpdateHandVisuals();
         }
 
-        private void AddCardToHand()
+        public int GetCardCount()
         {
-            GameObject newCard = Instantiate(cardPrefab, handTransform.position, Quaternion.identity, handTransform);
-            cardsInHand.Add(newCard);
+            return this.cardsInHand.Count;
+        }
+
+        private void Awake()
+        {
+            if (isCenterPile == false)
+            {
+                _flipRotation = 180f;
+            }
+            else
+            {
+                _flipRotation = 0f;
+            }
+        }
+
+        public void AddCardToHand(GameObject card)
+        {
+            // GameObject newCard = Instantiate(cardPrefab, handTransform.position, Quaternion.identity, handTransform);
+            // newCard.GetComponent<Card>().SetCardData(cardData);
+            cardsInHand.Add(card);
+            card.transform.position = handTransform.position;
+            card.transform.parent = handTransform;
+            card.transform.rotation = Quaternion.identity;
+            card.transform.localPosition = new Vector3(0f, 0f, 0f);
+            card.transform.localRotation = Quaternion.identity;
 
             UpdateHandVisuals();
         }
 
-        private void RemoveCardFromHand()
+        public void RemoveCardFromHand()
         {
             if (cardsInHand.Count == 0)
             {
@@ -69,6 +86,12 @@ namespace Card
 
         private void UpdateHandVisuals()
         {
+            if (isCenterPile == true)
+            {
+                handForm = HandForm.Pile;
+                CreatePile();
+                return;
+            }
             int cardCount = cardsInHand.Count;
             
             if (cardCount <= maxHandSize)
@@ -89,8 +112,9 @@ namespace Card
 
             if (cardCount == 1)
             {
-                cardsInHand[0].transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+                cardsInHand[0].transform.localRotation = Quaternion.Euler(0f, _flipRotation, 0f);
                 cardsInHand[0].transform.localPosition = Vector3.zero;
+                // cardsInHand[0].GetComponent<Card>().SetVisibility(true);
                 return;
             }
             
@@ -98,7 +122,7 @@ namespace Card
             {
                 cardsInHand[i].GetComponent<Card>().SetVisibility(true);
                 float rotationAngle = fanSpread * (i - (cardCount - 1) / 2f);
-                cardsInHand[i].transform.localRotation = Quaternion.Euler(0f, 180f, rotationAngle); // 180 to be flipped
+                cardsInHand[i].transform.localRotation = Quaternion.Euler(0f, _flipRotation, rotationAngle); // 180 to be flipped
 
                 float horizontalOffset = fanCardSpacing * (i - (cardCount - 1) / 2f);
                 
@@ -111,6 +135,22 @@ namespace Card
         private void CreatePile()
         {
             int cardCount = cardsInHand.Count;
+            
+            if (cardCount <= maxHandSize)
+            {
+                for (int i = 0; i < cardCount; ++i)
+                {
+                    int i2 = i;
+                
+                    cardsInHand[i].GetComponent<Card>().SetVisibility(true);
+                    cardsInHand[i].transform.localRotation = Quaternion.Euler(0f, _flipRotation, 0f); // 180 to be flipped
+
+                    float horizontalOffset = pileCardSpacing * (i2 - (maxHandSize - 1) / 2f);
+                    cardsInHand[i].transform.localPosition = new Vector3(horizontalOffset, 0f, (maxHandSize - i2) * 0.3f);
+                }
+
+                return;
+            }
 
             for (int i = 0; i < cardCount - maxHandSize; ++i)
             {
@@ -122,11 +162,24 @@ namespace Card
                 int i2 = i - (cardCount - maxHandSize);
                 
                 cardsInHand[i].GetComponent<Card>().SetVisibility(true);
-                cardsInHand[i].transform.localRotation = Quaternion.Euler(0f, 180f, 0f); // 180 to be flipped
+                cardsInHand[i].transform.localRotation = Quaternion.Euler(0f, _flipRotation, 0f); // 180 to be flipped
 
                 float horizontalOffset = pileCardSpacing * (i2 - (maxHandSize - 1) / 2f);
-                cardsInHand[i].transform.localPosition = new Vector3(horizontalOffset, 0f, (maxHandSize - i2) * 0.2f);
+                cardsInHand[i].transform.localPosition = new Vector3(horizontalOffset, 0f, (maxHandSize - i2) * 0.3f);
             }
+        }
+        
+        public GameObject PlayTopCard()
+        {
+            if (cardsInHand.Count == 0)
+                return null;
+
+            GameObject cardToPlay = cardsInHand[0];
+            cardsInHand.RemoveAt(0);
+            UpdateHandVisuals();
+    
+            // Instead of destroying, move it to a new position
+            return cardToPlay; // Return the card GameObject so we can use it in DeckManager
         }
     }
 }

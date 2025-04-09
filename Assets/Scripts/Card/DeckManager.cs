@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -16,6 +17,13 @@ namespace Card
         private List<GameObject> _allCardsInScene = new List<GameObject>();
 
         private int _currentIndex = 0;
+
+        private void Awake()
+        {
+            CardData[] cards = Resources.LoadAll<CardData>("Scriptable Objects/Cards");
+            allCards.AddRange(cards);
+            Debug.Log($"Loaded {allCards.Count} cards from Resources.");
+        }
 
         private void Start()
         {
@@ -48,9 +56,13 @@ namespace Card
                 PlayRound(player1HandManager);
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                CheckForWinningCondition();
+                CheckForWinningCondition(player1HandManager);
+            }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                CheckForWinningCondition(player2HandManager);
             }
         }
 
@@ -123,15 +135,9 @@ namespace Card
             centerPileHandManager.AddCardToHand(card);
         }
         
-        private void CheckForWinningCondition()
+        private void CheckForWinningCondition(HandManager playerHandManager)
         {
-            // Implement game-specific rules. For now, random win example:
-            int winner = UnityEngine.Random.Range(0, 2); // Randomly decide winner for now.
-
-            if (winner == 0)
-                TakePile(player1HandManager);
-            else
-                TakePile(player2HandManager);
+            TakePile(playerHandManager);
         }
 
         private void TakePile(HandManager winnerHand)

@@ -53,5 +53,10 @@ namespace Card
         {
             return backTexture;
         }
+
+        public int GetCardsToPlace()
+        {
+            return _cardsToPlace;
+        }
     }
 }

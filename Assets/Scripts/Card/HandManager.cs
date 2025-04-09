@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -27,6 +28,8 @@ namespace Card
         
         private HandForm handForm = HandForm.Fan; // change form from fan to pile
         [SerializeField] private List<GameObject> cardsInHand = new List<GameObject>();
+
+        [SerializeField] private TextMeshProUGUI cardCountText;
     
         void Start()
         {
@@ -86,6 +89,8 @@ namespace Card
 
         private void UpdateHandVisuals()
         {
+            cardCountText.text = cardsInHand.Count.ToString();
+            
             if (isCenterPile == true)
             {
                 handForm = HandForm.Pile;

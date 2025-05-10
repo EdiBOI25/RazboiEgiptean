@@ -114,6 +114,8 @@ namespace Card
         private void CreateFan()
         {
             int cardCount = cardsInHand.Count;
+            if (cardCount == 0)
+                return;
 
             if (cardCount == 1)
             {
@@ -140,6 +142,8 @@ namespace Card
         private void CreatePile()
         {
             int cardCount = cardsInHand.Count;
+            if (cardCount == 0)
+                return;
             
             if (cardCount <= maxHandSize)
             {
@@ -152,6 +156,11 @@ namespace Card
 
                     float horizontalOffset = pileCardSpacing * (i2 - (maxHandSize - 1) / 2f);
                     cardsInHand[i].transform.localPosition = new Vector3(horizontalOffset, 0f, (maxHandSize - i2) * 0.3f);
+                }
+
+                if (isCenterPile)
+                {
+                    cardsInHand[^1].transform.localPosition += new Vector3(3f, 0f, 0f);
                 }
 
                 return;
@@ -171,6 +180,11 @@ namespace Card
 
                 float horizontalOffset = pileCardSpacing * (i2 - (maxHandSize - 1) / 2f);
                 cardsInHand[i].transform.localPosition = new Vector3(horizontalOffset, 0f, (maxHandSize - i2) * 0.3f);
+            }
+
+            if (isCenterPile)
+            {
+                cardsInHand[^1].transform.localPosition += new Vector3(3f, 0f, 0f);
             }
         }
         

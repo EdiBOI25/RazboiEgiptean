@@ -1,11 +1,12 @@
-using Steamworks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Steamworks;
 
-namespace Network
+
+namespace Card
 {
-    public class PlayerListItem : MonoBehaviour
+    public class InGamePlayer : MonoBehaviour
     {
         public string playerName;
         public int connectionId;
@@ -14,7 +15,7 @@ namespace Network
 
         public TextMeshProUGUI playerNameText;
         public RawImage playerIcon;
-    
+        
         protected Callback<AvatarImageLoaded_t> AvatarImageLoaded;
 
         private void Start()
@@ -83,5 +84,8 @@ namespace Network
                 return;
             }
         }
+        
+        // void PlayTopCard(){}
+        // void ReceiveCards(List<Card>){}
     }
 }

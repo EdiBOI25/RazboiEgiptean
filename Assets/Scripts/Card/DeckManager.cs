@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Mirror;
+using Network;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -9,27 +11,68 @@ namespace Card
     public class DeckManager : MonoBehaviour
     {
         [SerializeField] private List<CardData> allCards = new List<CardData>();
-        [SerializeField] private HandManager player1HandManager;
-        [SerializeField] private HandManager player2HandManager;
-        [SerializeField] private HandManager centerPileHandManager;
+        [SerializeField] public HandManager player1HandManager;
+        [SerializeField] public HandManager player2HandManager;
+        [SerializeField] public HandManager centerPileHandManager;
         [SerializeField] private GameObject cardPrefab;
         
         private List<GameObject> _allCardsInScene = new List<GameObject>();
 
         private int _currentIndex = 0;
+        
+        public PlayerTurnManager playerTurnManager;
 
         private void Awake()
         {
             CardData[] cards = Resources.LoadAll<CardData>("Scriptable Objects/Cards");
             allCards.AddRange(cards);
             Debug.Log($"Loaded {allCards.Count} cards from Resources.");
+            
+            // playerTurnManager = new PlayerTurnManager();
+            // playerTurnManager.Init(this, player1HandManager, player2HandManager);
         }
 
         private void Start()
         {
-            InstantiateCards();
-            DistributeCards();
+            // InstantiateCards();
+            // DistributeCards();
+            var players = ((CustomNetworkManager)NetworkManager.singleton).GamePlayers;
+
+            PlayerObjectController localPlayer = null;
+            PlayerObjectController opponentPlayer = null;
+
+            foreach (var player in players)
+            {
+                if (player.isLocalPlayer)
+                    localPlayer = player;
+                else
+                    opponentPlayer = player;
+            }
+
+            bool isLocalPlayerFirst = (localPlayer.playerIdNumber == 1);
+            FindObjectOfType<DeckManager>().SetupHands(isLocalPlayerFirst);
         }
+        
+        public void SetupHands(bool isLocalPlayerBottom)
+        {
+            InstantiateCards(); // create all card objects
+
+            if (isLocalPlayerBottom)
+            {
+                Debug.Log("Local player is Player 1 (bottom)");
+                player1HandManager = GameObject.Find("BottomHandManager").GetComponent<HandManager>();
+                player2HandManager = GameObject.Find("TopHandManager").GetComponent<HandManager>();
+            }
+            else
+            {
+                Debug.Log("Local player is Player 2 (bottom)");
+                player1HandManager = GameObject.Find("TopHandManager").GetComponent<HandManager>();
+                player2HandManager = GameObject.Find("BottomHandManager").GetComponent<HandManager>();
+            }
+
+            DistributeCards(); // now we know who is who
+        }
+
 
         private void InstantiateCards()
         {
@@ -46,24 +89,24 @@ namespace Card
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                PlayRound(player2HandManager);
-            }
-            
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                PlayRound(player1HandManager);
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                CheckForWinningCondition(player1HandManager);
-            }
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                CheckForWinningCondition(player2HandManager);
-            }
+            // if (Input.GetKeyDown(KeyCode.UpArrow))
+            // {
+            //     PlayRound(player2HandManager);
+            // }
+            //
+            // if (Input.GetKeyDown(KeyCode.DownArrow))
+            // {
+            //     PlayRound(player1HandManager);
+            // }
+            //
+            // if (Input.GetKeyDown(KeyCode.LeftArrow))
+            // {
+            //     CheckForWinningCondition(player1HandManager);
+            // }
+            // if (Input.GetKeyDown(KeyCode.RightArrow))
+            // {
+            //     CheckForWinningCondition(player2HandManager);
+            // }
         }
 
         // public void DrawCard(HandManager handManager)
@@ -135,7 +178,7 @@ namespace Card
             centerPileHandManager.AddCardToHand(card);
         }
         
-        private void CheckForWinningCondition(HandManager playerHandManager)
+        public void CheckForWinningCondition(HandManager playerHandManager)
         {
             TakePile(playerHandManager);
         }

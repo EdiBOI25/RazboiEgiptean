@@ -95,12 +95,12 @@ namespace Network
             currentLobbyId = callback.m_ulSteamIDLobby;
             lobbyNameText.gameObject.SetActive(true);
             lobbyNameText.text = SteamMatchmaking.GetLobbyData(new CSteamID(currentLobbyId), "name");
-            startGameButton.gameObject.SetActive(true);
-            startGameButton.interactable = true;
         
             // Clients only
             if (NetworkServer.active)
             {
+                startGameButton.gameObject.SetActive(true);
+                startGameButton.interactable = true;
                 return;
             }
         
@@ -116,8 +116,8 @@ namespace Network
             if (!NetworkServer.active) return;
 
             // Start only if 2 players are connected
-            // if (manager.GamePlayers.Count == 2)
-            if (manager.GamePlayers.Count == 1)
+            if (manager.GamePlayers.Count == 2)
+            // if (manager.GamePlayers.Count == 1)
             {
                 Debug.Log("Changing scene to TheGame");
                 NetworkManager.singleton.ServerChangeScene("TheGame");

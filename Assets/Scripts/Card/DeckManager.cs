@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 namespace Card
 {
-    public class DeckManager : MonoBehaviour
+    public class DeckManager : NetworkBehaviour
     {
         [SerializeField] private List<CardData> allCards = new List<CardData>();
         [SerializeField] public HandManager player1HandManager;
@@ -21,6 +21,8 @@ namespace Card
         private int _currentIndex = 0;
         
         public PlayerTurnManager playerTurnManager;
+
+        private bool isHost;
 
         private void Awake()
         {
@@ -48,16 +50,26 @@ namespace Card
                 else
                     opponentPlayer = player;
             }
+            
+            Debug.Log($"{localPlayer.playerName} is local player. {opponentPlayer.playerName} is opponent.");
+            isHost = (localPlayer.playerIdNumber == 1);
+            if (isHost)
+            {
+                Debug.Log($"I am the host");
+            }
+            else
+            {
+                Debug.Log($"I am the connected player (I joined from Steam)");
+            }
 
-            bool isLocalPlayerFirst = (localPlayer.playerIdNumber == 1);
-            FindObjectOfType<DeckManager>().SetupHands(isLocalPlayerFirst);
+            SetupHands();
         }
         
-        public void SetupHands(bool isLocalPlayerBottom)
+        public void SetupHands()
         {
             InstantiateCards(); // create all card objects
 
-            if (isLocalPlayerBottom)
+            if (isHost)
             {
                 Debug.Log("Local player is Player 1 (bottom)");
                 player1HandManager = GameObject.Find("BottomHandManager").GetComponent<HandManager>();
@@ -79,6 +91,7 @@ namespace Card
             for (int i = 0; i < allCards.Count; ++i)
             {
                 GameObject card = Instantiate(cardPrefab, this.transform.position, Quaternion.identity, this.transform);
+                NetworkServer.Spawn(card);
                 card.GetComponent<Card>().SetCardData(allCards[i]);
                 card.transform.localPosition = new Vector3(0, 0, 0);
                 card.transform.localRotation = Quaternion.identity;
@@ -134,6 +147,9 @@ namespace Card
         
         public void DistributeCards()
         {
+            if (!isServer)
+                return;
+            
             List<GameObject> shuffledDeck = new List<GameObject>(_allCardsInScene);
             shuffledDeck = ShuffleDeck(shuffledDeck);
 

@@ -359,6 +359,50 @@ MonoBehaviour:
   isCenterPile: 1
   cardsInHand: []
   cardCountText: {fileID: 1010847768}
+--- !u!1 &243720604
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 243720606}
+  - component: {fileID: 243720605}
+  m_Layer: 0
+  m_Name: PlayerTurnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &243720605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 243720604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 543fb7937fbeea54fb7ad8f4f7e5c968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &243720606
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 243720604}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -50.09309, y: 26.75435, z: -23.176636}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &271940635
 GameObject:
   m_ObjectHideFlags: 0
@@ -1691,6 +1735,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1757011090}
   - component: {fileID: 1757011089}
+  - component: {fileID: 1757011091}
   m_Layer: 0
   m_Name: DeckManager
   m_TagString: Untagged
@@ -1710,6 +1755,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce99c492e8dc885408830c3d73885b7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   allCards: []
   player1HandManager: {fileID: 965226032}
   player2HandManager: {fileID: 1157209520}
@@ -1731,6 +1779,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1757011091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1757011088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 3864186300
+  _assetId: 0
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &1784170260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1879,3 +1944,4 @@ SceneRoots:
   - {fileID: 80420134}
   - {fileID: 2085032922}
   - {fileID: 1757011090}
+  - {fileID: 243720606}

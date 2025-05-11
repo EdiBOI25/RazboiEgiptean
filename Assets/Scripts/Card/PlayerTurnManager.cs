@@ -1,13 +1,14 @@
+using Network;
 using UnityEngine;
 
 namespace Card
 {
     public class PlayerTurnManager : MonoBehaviour
     {
-        private InGamePlayer localPlayer;
-        private InGamePlayer remotePlayer;
-        private InGamePlayer currentPlayer;
-        private InGamePlayer lastFaceCardPlayer;
+        private PlayerObjectController localPlayer;
+        private PlayerObjectController remotePlayer;
+        private PlayerObjectController currentPlayer;
+        private PlayerObjectController lastFaceCardPlayer;
 
         private DeckManager deckManager;
         
@@ -24,7 +25,7 @@ namespace Card
         }
         GameState currentGameState = GameState.WaitingForPlay;
 
-        public void Init(DeckManager deck, InGamePlayer local, InGamePlayer remote)
+        public void Init(DeckManager deck, PlayerObjectController local, PlayerObjectController remote)
         {
         }
 
@@ -32,7 +33,7 @@ namespace Card
         {
         }
 
-        void OnSlapAttempt(InGamePlayer slapper)
+        void OnSlapAttempt(PlayerObjectController slapper)
         {
         }
 
@@ -52,7 +53,7 @@ namespace Card
         {
         }
 
-        void AwardPileTo(InGamePlayer player)
+        void AwardPileTo(PlayerObjectController player)
         {
         }
 

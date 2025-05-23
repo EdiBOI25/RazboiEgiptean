@@ -1,5 +1,7 @@
+using FirebaseDB;
 using Mirror;
 using Steamworks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +22,8 @@ namespace Network
         public Button hostButton;
         public Text lobbyNameText;
         public Button startGameButton;
+        
+        public TextMeshProUGUI totalMatchesText;
 
         private void Start()
         {
@@ -45,6 +49,15 @@ namespace Network
             hostButton.interactable = true;
             lobbyNameText.gameObject.SetActive(false);
             startGameButton.gameObject.SetActive(false);
+            
+            string csteamId = SteamUser.GetSteamID().ToString();
+            FirebaseManager.Instance.userManager.GetUserTotalMatches(csteamId, totalMatches =>
+            {
+                totalMatchesText.text = SteamFriends.GetPersonaName() + "\nTotal Matches: " + totalMatches;
+            }, error =>
+            {
+                totalMatchesText.text = "Total Matches: db error";
+            });
         }
 
         public void HostLobby()
@@ -115,10 +128,30 @@ namespace Network
             // Ensure this runs only on host
             if (!NetworkServer.active) return;
 
-            // Start only if 2 players are connected
             if (manager.GamePlayers.Count == 2)
             // if (manager.GamePlayers.Count == 1)
             {
+                var players = manager.GamePlayers;
+                foreach (var player in players)
+                {
+                    FirebaseManager.Instance.userManager.IncrementUserTotalMatches(player.playerSteamId.ToString(), () =>
+                    {
+                        Debug.Log("Incremented total matches for player " + SteamFriends.GetPersonaName());
+                    }, error =>
+                    {
+                        Debug.LogError("Error incrementing total matches for player " + SteamFriends.GetPersonaName() + ": " + error);
+                    });
+                }
+                
+                FirebaseManager.Instance.matchManager.AddMatch(players[0].playerSteamId.ToString(), players[1].playerSteamId.ToString(), 0, matchId =>
+                {
+                    Debug.Log("Match created with ID: " + matchId);
+                }, error =>
+                {
+                    Debug.LogError("Error creating match: " + error);
+                });
+                
+                
                 Debug.Log("Changing scene to TheGame");
                 NetworkManager.singleton.ServerChangeScene("TheGame");
             }
